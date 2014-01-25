@@ -87,12 +87,12 @@ public class BlogPostDAO {
         Date date = new Date();
 
         post.append("title",title)
-                .append("author",username)
-                .append("body",body)
-                .append("permalink",permalink)
-                .append("tags",tags)
-                .append("comments",comments)
-                .append("date",date);
+                .append("author", username)
+                .append("body", body)
+                .append("permalink", permalink)
+                .append("tags", tags)
+                .append("comments", comments)
+                .append("date", date);
 
         postsCollection.insert(post);
 
@@ -120,8 +120,16 @@ public class BlogPostDAO {
         // - email is optional and may come in NULL. Check for that.
         // - best solution uses an update command to the database and a suitable
         //   operator to append the comment on to any existing list of comments
+        BasicDBObject comment = new BasicDBObject()
+                .append("author", name)
+                .append("body", body);
 
+        if (email != null)
+            comment.append("email",email);
 
+        BasicDBObject post = (BasicDBObject) postsCollection.findOne(new BasicDBObject("permalink",permalink));
+        BasicDBObject update = new BasicDBObject("comments",comment);
+        postsCollection.update(post,new BasicDBObject("$push",update));
 
     }
 
